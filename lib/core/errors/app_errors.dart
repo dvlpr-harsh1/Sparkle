@@ -1,17 +1,17 @@
-sealed class AppErrors {
+sealed class AppError {
   final String message;
-  const AppErrors(this.message);
+  const AppError(this.message);
 }
 
-class NetworkError extends AppErrors {
+class NetworkError extends AppError {
   const NetworkError() : super('No Internet Connection');
 }
 
-class AuthErrors extends AppErrors {
+class AuthErrors extends AppError {
   const AuthErrors({required String message}) : super(message);
 }
 
-class UnknownErrors extends AppErrors {
+class UnknownErrors extends AppError {
   const UnknownErrors() : super('Something went wrong. Please try again');
 }
 

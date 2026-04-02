@@ -6,6 +6,7 @@ import 'package:sparkle/core/themes/app_theme.dart';
 import 'package:sparkle/features/auth/data/auth_repository.dart';
 import 'package:sparkle/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:sparkle/features/auth/presentation/bloc/auth_event.dart';
+import 'package:sparkle/features/profile/data/repository/profile_repository.dart';
 import 'firebase_options.dart';   
 
 void main() async {
@@ -20,12 +21,22 @@ class SparkleApp extends StatelessWidget {
   const SparkleApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final authRepository = AuthRepository();
-    final authBloc = AuthBloc(authRepository: authRepository)
-      ..add(const AuthStarted());
+  // main.dart — update the build method
+@override
+Widget build(BuildContext context) {
+  final authRepository = AuthRepository();
+  final profileRepository = ProfileRepository();  // add this
+  final authBloc = AuthBloc(
+  authRepository: authRepository,
+  profileRepository: profileRepository,  // add this
+)..add(const AuthStarted());
 
-    return BlocProvider.value(
+  return MultiRepositoryProvider(          // change to MultiRepositoryProvider
+    providers: [
+      RepositoryProvider.value(value: authRepository),
+      RepositoryProvider.value(value: profileRepository),  // add this
+    ],
+    child: BlocProvider.value(
       value: authBloc,
       child: MaterialApp.router(
         title: 'Sparkle',
@@ -33,6 +44,7 @@ class SparkleApp extends StatelessWidget {
         theme: AppTheme.light,
         routerConfig: createRouter(authBloc),
       ),
-    );
-  }
+    ),
+  );
+}
 }

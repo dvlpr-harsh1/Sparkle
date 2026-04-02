@@ -3,10 +3,18 @@ import 'package:sparkle/core/errors/app_errors.dart';
 import 'package:sparkle/features/auth/data/auth_repository.dart';
 import 'package:sparkle/features/auth/presentation/bloc/auth_event.dart';
 import 'package:sparkle/features/auth/presentation/bloc/auth_state.dart';
+import 'package:sparkle/features/profile/data/model/user_model.dart';
+import 'package:sparkle/features/profile/data/repository/profile_repository.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthRepository authRepository;
-  AuthBloc({required this.authRepository}) : super(AuthInitial()) {
+  final ProfileRepository _profileRepository;
+  AuthBloc({
+    required AuthRepository authRepository,
+    required ProfileRepository profileRepository,
+  }) : authRepository = authRepository,
+       _profileRepository = profileRepository,
+       super(const AuthInitial()) {
     on<AuthStarted>(_onAuthStarted);
     on<AuthSignUpRequested>(_onSignUp);
     on<AuthSignInRequested>(_onSignIn);
@@ -30,10 +38,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthSignUpRequested event,
     Emitter<AuthState> emit,
   ) async {
-    emit(AuthLoading());
+    emit(const AuthLoading());
     try {
-      await authRepository.signUp(email: event.email, password: event.password);
-    } on AppErrors catch (e) {
+      final user = await authRepository.signUp(
+        email: event.email,
+        password: event.password,
+      );
+      
+      await _profileRepository.createProfile(
+        UserProfile(id: user.uid, name: event.name, email: event.email),
+      );
+    } on AppError catch (e) {
       emit(AuthFailure(e.message));
     }
   }
@@ -45,7 +60,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       await authRepository.signIn(email: event.email, password: event.password);
-    } on AppErrors catch (e) {
+    } on AppError catch (e) {
       emit(AuthFailure(e.message));
     }
   }
