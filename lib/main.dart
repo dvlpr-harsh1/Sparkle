@@ -8,6 +8,7 @@ import 'package:sparkle/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:sparkle/features/auth/presentation/bloc/auth_event.dart';
 import 'package:sparkle/features/profile/data/repository/profile_repository.dart';
 import 'package:sparkle/features/records/data/repository/record_repository.dart';
+import 'package:sparkle/features/reminders/data/repository/reminder_repository.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -28,12 +29,14 @@ class SparkleApp extends StatelessWidget {
       authRepository: authRepository,
       profileRepository: profileRepository,
     )..add(const AuthStarted());
+    final reminderRepository = ReminderRepository();
 
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider.value(value: authRepository),
         RepositoryProvider.value(value: profileRepository),
         RepositoryProvider.value(value: recordRepository),
+        RepositoryProvider.value(value: reminderRepository),
       ],
       child: BlocProvider.value(
         value: authBloc,
@@ -46,6 +49,7 @@ class SparkleApp extends StatelessWidget {
             authBloc,
             profileRepository,
             recordRepository,
+            reminderRepository, 
           ),
         ),
       ),

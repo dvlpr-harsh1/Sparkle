@@ -14,6 +14,10 @@ import 'package:sparkle/features/records/data/repository/record_repository.dart'
 import 'package:sparkle/features/records/presentation/bloc/record_bloc.dart';
 import 'package:sparkle/features/records/presentation/bloc/record_event.dart';
 import 'package:sparkle/features/records/presentation/record_page.dart';
+import 'package:sparkle/features/reminders/data/repository/reminder_repository.dart';
+import 'package:sparkle/features/reminders/presentation/bloc/reminder_bloc.dart';
+import 'package:sparkle/features/reminders/presentation/bloc/reminder_event.dart';
+import 'package:sparkle/features/reminders/presentation/reminder_page.dart';
 
 class AppShell extends StatelessWidget {
   final Widget child;
@@ -22,8 +26,9 @@ class AppShell extends StatelessWidget {
   int _currentIndex(BuildContext context) {
     final location = GoRouterState.of(context).matchedLocation;
     if (location.startsWith('/records')) return 1;
-    if (location.startsWith('/profile')) return 2;
-    return 0;
+    if (location.startsWith('/reminders')) return 2;
+    if (location.startsWith('/profile')) return 3;
+    return 0; // home
   }
 
   @override
@@ -39,6 +44,8 @@ class AppShell extends StatelessWidget {
             case 1:
               context.go('/records');
             case 2:
+              context.go('/reminders');
+            case 3:
               context.go('/profile');
           }
         },
@@ -52,6 +59,11 @@ class AppShell extends StatelessWidget {
             icon: Icon(Icons.folder_outlined),
             selectedIcon: Icon(Icons.folder),
             label: 'Records',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.notifications_none_outlined),
+            selectedIcon: Icon(Icons.notifications),
+            label: 'Reminders',
           ),
           NavigationDestination(
             icon: Icon(Icons.person_outline),
@@ -85,11 +97,11 @@ class DashboardScreen extends StatelessWidget {
   }
 }
 
-// Change createRouter to accept repositories too
 GoRouter createRouter(
   AuthBloc authBloc,
   ProfileRepository profileRepository,
   RecordRepository recordRepository,
+  ReminderRepository reminderRepository,
 ) {
   return GoRouter(
     refreshListenable: GoRouterAuthNotifier(authBloc),
@@ -119,23 +131,41 @@ GoRouter createRouter(
           return MultiBlocProvider(
             providers: [
               BlocProvider(
-                create: (_) =>
-                    RecordBloc(recordRepository: recordRepository)
-                      ..add(RecordWatchStarted(uid)),
+                create: (_) => RecordBloc(
+                  recordRepository: recordRepository,
+                )..add(RecordWatchStarted(uid)),
               ),
               BlocProvider(
-                create: (_) =>
-                    ProfileBloc(profileRepository: profileRepository)
-                      ..add(ProfileLoadRequested(uid)),
+                create: (_) => ProfileBloc(
+                  profileRepository: profileRepository,
+                )..add(ProfileLoadRequested(uid)),
+              ),
+              BlocProvider(
+                create: (_) => ReminderBloc(
+                  reminderRepository: reminderRepository,
+                )..add(ReminderWatchStarted(uid)),
               ),
             ],
             child: AppShell(child: child),
           );
         },
         routes: [
-          GoRoute(path: '/home', builder: (_, __) => const DashboardScreen()),
-          GoRoute(path: '/records', builder: (_, __) => const RecordsPage()),
-          GoRoute(path: '/profile', builder: (_, __) => const ProfilePage()),
+          GoRoute(
+            path: '/home',
+            builder: (_, __) => const DashboardScreen(),
+          ),
+          GoRoute(
+            path: '/records',
+            builder: (_, __) => const RecordsPage(),
+          ),
+          GoRoute(
+            path: '/reminders',      // ← now INSIDE ShellRoute
+            builder: (_, __) => const RemindersPage(),
+          ),
+          GoRoute(
+            path: '/profile',
+            builder: (_, __) => const ProfilePage(),
+          ),
         ],
       ),
     ],
