@@ -67,28 +67,28 @@ class DependentListTile extends StatelessWidget {
   }
 
   void _confirmDelete(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Remove dependent'),
-        content: Text('Remove ${dependent.name} from your dependents?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+  showDialog(
+    context: context,
+    builder: (dialogContext) => AlertDialog( // ← use dialogContext
+      title: const Text('Remove dependent'),
+      content: Text('Remove ${dependent.name} from your dependents?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(), // ✅
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(dialogContext).pop(); // ✅
+            onDelete();
+          },
+          child: const Text(
+            'Remove',
+            style: TextStyle(color: AppTheme.danger),
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              onDelete();
-            },
-            child: const Text(
-              'Remove',
-              style: TextStyle(color: AppTheme.danger),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 }

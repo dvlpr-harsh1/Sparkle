@@ -34,6 +34,6 @@ class AuthSignInRequested extends AuthEvent {
   List<Object?> get props => [email, password];
 }
 
-class AuthSignOutRequrested extends AuthEvent {
-  const AuthSignOutRequrested();
+class AuthSignOutRequested extends AuthEvent {
+  const AuthSignOutRequested();
 }

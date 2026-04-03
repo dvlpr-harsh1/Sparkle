@@ -18,7 +18,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthStarted>(_onAuthStarted);
     on<AuthSignUpRequested>(_onSignUp);
     on<AuthSignInRequested>(_onSignIn);
-    on<AuthSignOutRequrested>(_onSignOut);
+    on<AuthSignOutRequested>(_onSignOut);
   }
 
   Future<void> _onAuthStarted(
@@ -44,7 +44,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: event.email,
         password: event.password,
       );
-      
+
       await _profileRepository.createProfile(
         UserProfile(id: user.uid, name: event.name, email: event.email),
       );
@@ -66,7 +66,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onSignOut(
-    AuthSignOutRequrested event,
+    AuthSignOutRequested event,
     Emitter<AuthState> emit,
   ) async {
     await authRepository.signOut();

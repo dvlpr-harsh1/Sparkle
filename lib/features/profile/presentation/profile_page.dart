@@ -11,20 +11,15 @@ import 'package:sparkle/features/profile/presentation/bloc/profile_state.dart';
 import 'package:sparkle/shared/widgets/dependent_list_tile.dart';
 import 'package:sparkle/shared/widgets/spartkle_textfield.dart';
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final authState = context.read<AuthBloc>().state;
     if (authState is! AuthAuthenticated) return const SizedBox.shrink();
 
-    return BlocProvider(
-      create: (_) => ProfileBloc(
-        profileRepository: context.read(),
-      )..add(ProfileLoadRequested(authState.user.uid)),
-      child: const _ProfileView(),
-    );
+    return const _ProfileView();
   }
 }
 
@@ -125,6 +120,7 @@ class _ProfileContent extends StatelessWidget {
                   ),
                 ),
               ),
+
               icon: const Icon(Icons.add, size: 18),
               label: const Text('Add'),
             ),
@@ -138,11 +134,8 @@ class _ProfileContent extends StatelessWidget {
             (d) => DependentListTile(
               dependent: d,
               onDelete: () => context.read<ProfileBloc>().add(
-                    ProfileDependentDeleted(
-                      userId: profile.id,
-                      dependentId: d.id,
-                    ),
-                  ),
+                ProfileDependentDeleted(userId: profile.id, dependentId: d.id),
+              ),
             ),
           ),
       ],
@@ -261,8 +254,7 @@ class _InfoRow extends StatelessWidget {
             ],
           ),
         ),
-        if (!isLast)
-          const Divider(height: 1, color: Color(0xFFE0E0F0)),
+        if (!isLast) const Divider(height: 1, color: Color(0xFFE0E0F0)),
       ],
     );
   }
@@ -305,10 +297,10 @@ class _EditProfileSheet extends StatefulWidget {
 
 class _EditProfileSheetState extends State<_EditProfileSheet> {
   final _formKey = GlobalKey<FormState>();
-  late final _nameController =
-      TextEditingController(text: widget.profile.name);
-  late final _dobController =
-      TextEditingController(text: widget.profile.dateOfBirth ?? '');
+  late final _nameController = TextEditingController(text: widget.profile.name);
+  late final _dobController = TextEditingController(
+    text: widget.profile.dateOfBirth ?? '',
+  );
   String? _selectedGender;
   String? _selectedBloodGroup;
 
@@ -332,16 +324,17 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
   void _save() {
     if (_formKey.currentState?.validate() ?? false) {
       context.read<ProfileBloc>().add(
-            ProfileUpdateRequested(
-              widget.profile.copyWith(
-                name: _nameController.text.trim(),
-                dateOfBirth:
-                    _dobController.text.isEmpty ? null : _dobController.text,
-                gender: _selectedGender,
-                bloodGroup: _selectedBloodGroup,
-              ),
-            ),
-          );
+        ProfileUpdateRequested(
+          widget.profile.copyWith(
+            name: _nameController.text.trim(),
+            dateOfBirth: _dobController.text.isEmpty
+                ? null
+                : _dobController.text,
+            gender: _selectedGender,
+            bloodGroup: _selectedBloodGroup,
+          ),
+        ),
+      );
       Navigator.pop(context);
     }
   }
@@ -433,10 +426,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
               ],
             ),
             const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _save,
-              child: const Text('Save changes'),
-            ),
+            ElevatedButton(onPressed: _save, child: const Text('Save changes')),
           ],
         ),
       ),

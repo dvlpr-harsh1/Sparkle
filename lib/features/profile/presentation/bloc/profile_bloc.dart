@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:sparkle/features/profile/data/model/dependents_model.dart';
 import 'package:sparkle/features/profile/data/model/user_model.dart';
 import 'package:sparkle/features/profile/data/repository/profile_repository.dart';
@@ -23,18 +24,28 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     emit(const ProfileLoading());
     try {
-      // Watch profile stream
-      await emit.forEach(
+      // Combine both streams into one
+      // Every time profile changes OR dependents change
+      // this fires with the latest value of BOTH
+      final combined = Rx.combineLatest2(
         _profileRepository.watchProfile(event.userId),
-        onData: (UserProfile? profile) {
-          if (profile == null) return const ProfileFailure('Profile not found');
-          // Keep existing dependents if already loaded
-          final currentDependents = state is ProfileLoaded
-              ? (state as ProfileLoaded).dependents
-              : <DependentModel>[];
+        _profileRepository.watchDependents(event.userId),
+        (UserProfile? profile, List<DependentModel> dependents) {
+          // this function runs whenever either stream emits
+          // returns a tuple-like record with both values
+          return (profile: profile, dependents: dependents);
+        },
+      );
+
+      await emit.forEach(
+        combined,
+        onData: (data) {
+          if (data.profile == null) {
+            return const ProfileFailure('Profile not found');
+          }
           return ProfileLoaded(
-            profile: profile,
-            dependents: currentDependents,
+            profile: data.profile!,
+            dependents: data.dependents, // ← now always up to date!
           );
         },
         onError: (_, __) => const ProfileFailure('Failed to load profile'),
@@ -50,7 +61,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     try {
       await _profileRepository.updateProfile(event.profile);
-      // Stream will automatically emit new state via watchProfile
+      // combined stream fires automatically — no manual emit needed
     } catch (e) {
       emit(const ProfileFailure('Failed to update profile'));
     }
@@ -62,6 +73,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     try {
       await _profileRepository.addDependent(event.userId, event.dependent);
+      // combined stream fires automatically — no manual emit needed
     } catch (e) {
       emit(const ProfileFailure('Failed to add dependent'));
     }
@@ -72,8 +84,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     try {
-      await _profileRepository.deleteDependent(
-          event.userId, event.dependentId);
+      await _profileRepository.deleteDependent(event.userId, event.dependentId);
     } catch (e) {
       emit(const ProfileFailure('Failed to delete dependent'));
     }
