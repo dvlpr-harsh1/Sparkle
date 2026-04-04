@@ -6,6 +6,7 @@ import 'package:sparkle/features/auth/presentation/bloc/auth_event.dart';
 import 'package:sparkle/features/auth/presentation/bloc/auth_state.dart';
 import 'package:sparkle/features/auth/presentation/login_page.dart';
 import 'package:sparkle/features/auth/presentation/sign_up_page.dart';
+import 'package:sparkle/features/dashboard/presentation/dashboard_page.dart';
 import 'package:sparkle/features/profile/data/repository/profile_repository.dart';
 import 'package:sparkle/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:sparkle/features/profile/presentation/bloc/profile_event.dart';
@@ -28,7 +29,7 @@ class AppShell extends StatelessWidget {
     if (location.startsWith('/records')) return 1;
     if (location.startsWith('/reminders')) return 2;
     if (location.startsWith('/profile')) return 3;
-    return 0; // home
+    return 0;
   }
 
   @override
@@ -72,27 +73,6 @@ class AppShell extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sparkle'),
-        actions: [
-          TextButton(
-            onPressed: () =>
-                context.read<AuthBloc>().add(const AuthSignOutRequested()),
-            child: const Text('Sign out'),
-          ),
-        ],
-      ),
-      body: const Center(child: Text('Dashboard coming Saturday!')),
     );
   }
 }
@@ -152,14 +132,14 @@ GoRouter createRouter(
         routes: [
           GoRoute(
             path: '/home',
-            builder: (_, __) => const DashboardScreen(),
+            builder: (_, __) => const DashboardPage(), // ← replaced
           ),
           GoRoute(
             path: '/records',
             builder: (_, __) => const RecordsPage(),
           ),
           GoRoute(
-            path: '/reminders',      // ← now INSIDE ShellRoute
+            path: '/reminders',
             builder: (_, __) => const RemindersPage(),
           ),
           GoRoute(
