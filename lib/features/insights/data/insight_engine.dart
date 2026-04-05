@@ -5,8 +5,7 @@ import 'package:sparkle/features/records/data/model/record_category.dart';
 import 'package:sparkle/features/reminders/data/model/remider_model.dart';
 
 class InsightsEngine {
-  // Static method — no instance needed, pure input → output
-  // Takes current app data, returns list of insights
+  
   static List<InsightModel> generate({
     required UserProfile profile,
     required List<HealthRecord> records,
@@ -15,7 +14,7 @@ class InsightsEngine {
     final insights = <InsightModel>[];
     final now = DateTime.now();
 
-    // RULE 1 — Profile incomplete
+    // Profile incomplete
     if (profile.completionPercentage < 1.0) {
       insights.add(const InsightModel(
         emoji: '👤',
@@ -26,7 +25,7 @@ class InsightsEngine {
       ));
     }
 
-    // RULE 2 — No records at all
+    // No records
     if (records.isEmpty) {
       insights.add(const InsightModel(
         emoji: '📁',
@@ -35,12 +34,10 @@ class InsightsEngine {
             'Add your first prescription, lab report or vaccination record.',
         type: InsightType.info,
       ));
-      // return early — no point checking record-based rules
+      // r
       return insights;
     }
 
-    // RULE 3 — No vaccination in last 12 months
-    // filter vaccine records, find the most recent one
     final vaccineRecords = records
         .where((r) => r.category == RecordCategory.vaccine)
         .toList();
@@ -54,8 +51,7 @@ class InsightsEngine {
         type: InsightType.warning,
       ));
     } else {
-      // parse the most recent vaccine date
-      // our date is stored as DD/MM/YYYY string
+      // parse the recent vaccine date
       final lastVaccine = _mostRecentDate(vaccineRecords);
       if (lastVaccine != null) {
         final monthsSince =
@@ -71,8 +67,6 @@ class InsightsEngine {
         }
       }
     }
-
-    // RULE 4 — No annual checkup in last 12 months
     final visitRecords = records
         .where((r) => r.category == RecordCategory.visit)
         .toList();
@@ -102,7 +96,7 @@ class InsightsEngine {
       }
     }
 
-    // RULE 5 — Overdue reminders
+    // Overdue reminders
     final overdueCount = reminders.where((r) => r.isOverdue).length;
     if (overdueCount > 0) {
       insights.add(InsightModel(
@@ -114,7 +108,6 @@ class InsightsEngine {
       ));
     }
 
-    // RULE 6 — All good!
     if (insights.isEmpty) {
       insights.add(const InsightModel(
         emoji: '✅',
@@ -128,27 +121,25 @@ class InsightsEngine {
     return insights;
   }
 
-  // Helper — parses DD/MM/YYYY date strings and returns most recent
   static DateTime? _mostRecentDate(List<HealthRecord> records) {
     DateTime? mostRecent;
 
     for (final record in records) {
       try {
-        // split "03/04/2026" → ["03", "04", "2026"]
         final parts = record.date.split('/');
         if (parts.length != 3) continue;
 
         final date = DateTime(
-          int.parse(parts[2]), // year
-          int.parse(parts[1]), // month
-          int.parse(parts[0]), // day
+          int.parse(parts[2]),
+          int.parse(parts[1]), 
+          int.parse(parts[0]), 
         );
 
         if (mostRecent == null || date.isAfter(mostRecent)) {
           mostRecent = date;
         }
       } catch (_) {
-        continue; // skip malformed dates
+        continue; 
       }
     }
 

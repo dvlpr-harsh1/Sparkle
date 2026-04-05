@@ -21,7 +21,6 @@ class ReminderRepository {
   }
 
 
-  // so nearest reminder shows first
   Stream<List<ReminderModel>> watchReminders(String userId) {
     return _remindersCol(userId)
         .orderBy('dateTime', descending: false)
@@ -35,7 +34,6 @@ class ReminderRepository {
   }
 
  
-  // targeted update, not full document rewrite
   Future<void> toggleDone(
     String userId,
     String reminderId,

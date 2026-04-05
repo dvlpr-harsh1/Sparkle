@@ -14,7 +14,6 @@ class RecordCard extends StatelessWidget {
   final HealthRecord record;
   const RecordCard({super.key, required this.record});
 
-  // if dependentId exists → find dependent name from loaded list
   String _getOwnerName(BuildContext context) {
     if (record.dependentId == null) return 'Myself';
 
@@ -109,7 +108,6 @@ class RecordCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
 
-          // FOR whom — now shows actual name not UUID
           Row(
             children: [
               const Icon(
@@ -128,7 +126,7 @@ class RecordCard extends StatelessWidget {
             ],
           ),
 
-          // Category specific detail summary
+          // Category
           if (record.details.isNotEmpty && _detailSummary().isNotEmpty) ...[
             const SizedBox(height: 6),
             Text(

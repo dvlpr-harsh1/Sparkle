@@ -119,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                     const SizedBox(height: 32),
-                    // Loading vs button
+                    // Loading & button
                     state is AuthLoading
                         ? const Center(child: CircularProgressIndicator())
                         : ElevatedButton(

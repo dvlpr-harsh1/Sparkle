@@ -38,9 +38,7 @@ class _AddReminderPageState extends State<AddReminderPage> {
     super.dispose();
   }
 
-  // Opens date picker then time picker in sequence
   Future<void> _pickDateTime() async {
-    // Step 1 — pick date
     final date = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -48,18 +46,16 @@ class _AddReminderPageState extends State<AddReminderPage> {
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
 
-    if (date == null) return; // user cancelled
+    if (date == null) return;
 
-    // Step 2 — pick time
     if (!mounted) return;
     final time = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
     );
 
-    if (time == null) return; // user cancelled
+    if (time == null) return; 
 
-    // Combine date + time into single DateTime
     setState(() {
       _selectedDateTime = DateTime(
         date.year,
@@ -114,7 +110,6 @@ class _AddReminderPageState extends State<AddReminderPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Who is this for
               const Text(
                 'This reminder is for',
                 style: TextStyle(
@@ -163,7 +158,6 @@ class _AddReminderPageState extends State<AddReminderPage> {
               ),
               const SizedBox(height: 20),
 
-              // Reminder type
               const Text(
                 'Type',
                 style: TextStyle(
@@ -211,7 +205,6 @@ class _AddReminderPageState extends State<AddReminderPage> {
               ),
               const SizedBox(height: 16),
 
-              // Date time picker
               const Text(
                 'Date & time',
                 style: TextStyle(

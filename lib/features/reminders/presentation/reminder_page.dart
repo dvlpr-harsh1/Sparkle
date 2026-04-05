@@ -129,7 +129,6 @@ class _ReminderTile extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          // red border if overdue, normal otherwise
           color: reminder.isOverdue
               ? AppTheme.danger.withOpacity(0.4)
               : const Color(0xFFE0E0F0),
@@ -137,7 +136,6 @@ class _ReminderTile extends StatelessWidget {
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        // Checkbox to mark done
         leading: Checkbox(
           value: reminder.isDone,
           activeColor: AppTheme.success,
@@ -158,7 +156,6 @@ class _ReminderTile extends StatelessWidget {
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: AppTheme.textPrimary,
-            // strikethrough if done
             decoration: reminder.isDone
                 ? TextDecoration.lineThrough
                 : TextDecoration.none,
@@ -169,7 +166,6 @@ class _ReminderTile extends StatelessWidget {
           children: [
             const SizedBox(height: 2),
             Text(
-              // Format DateTime to readable string
               DateFormat('dd MMM yyyy, hh:mm a').format(reminder.dateTime),
               style: TextStyle(
                 fontSize: 12,

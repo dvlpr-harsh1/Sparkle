@@ -11,14 +11,12 @@ class ProfileRepository {
   ProfileRepository({FirebaseFirestore? firestore})
     : _firestore = firestore ?? FirebaseFirestore.instance;
 
-  // Reference helpers — keeps code clean
   DocumentReference _userDoc(String userId) =>
       _firestore.collection(AppConstants.usersCollection).doc(userId);
 
   CollectionReference _dependentsCol(String userId) =>
       _userDoc(userId).collection(AppConstants.dependentsCollection);
 
-  // Called right after signup to create the initial profile
   Future<void> createProfile(UserProfile profile) async {
     await _userDoc(profile.id).set(profile.toMap());
   }
@@ -30,7 +28,7 @@ class ProfileRepository {
     return UserProfile.fromMap(doc.id, doc.data() as Map<String, dynamic>);
   }
 
-  // Stream — UI updates in real time when profile changes
+  // live data Stream
   Stream<UserProfile?> watchProfile(String userId) {
     return _userDoc(userId).snapshots().map((doc) {
       if (!doc.exists) return null;

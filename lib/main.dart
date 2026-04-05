@@ -44,7 +44,6 @@ class SparkleApp extends StatelessWidget {
           title: 'Sparkle',
           debugShowCheckedModeBanner: false,
           theme: AppTheme.light,
-          // pass repositories directly here
           routerConfig: createRouter(
             authBloc,
             profileRepository,

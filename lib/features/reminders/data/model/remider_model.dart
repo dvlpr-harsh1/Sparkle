@@ -7,7 +7,7 @@ class ReminderModel {
   final String? dependentId;
   final String title;
   final ReminderType type;
-  final DateTime dateTime;  // we work with DateTime in app
+  final DateTime dateTime;
   final bool isDone;
   final String notes;
 
@@ -29,9 +29,6 @@ class ReminderModel {
       dependentId: map['dependentId'],
       title: map['title'] ?? '',
       type: ReminderType.values.byName(map['type'] ?? 'medication'),
-
-      // Firestore gives Timestamp — convert to DateTime
-      // this is the key conversion you need to remember
       dateTime: (map['dateTime'] as Timestamp).toDate(),
 
       isDone: map['isDone'] ?? false,
@@ -46,7 +43,6 @@ class ReminderModel {
       'title': title,
       'type': type.name,
 
-      // DateTime → Timestamp for Firestore
       'dateTime': Timestamp.fromDate(dateTime),
 
       'isDone': isDone,
@@ -74,12 +70,8 @@ class ReminderModel {
     );
   }
 
-  // Is this reminder overdue?
-  // past dateTime and not done yet
   bool get isOverdue =>
       DateTime.now().isAfter(dateTime) && !isDone;
-
-  // Is it coming up within next 24 hours?
   bool get isUpcoming {
     final now = DateTime.now();
     final diff = dateTime.difference(now);

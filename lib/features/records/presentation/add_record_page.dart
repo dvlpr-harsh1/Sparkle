@@ -26,7 +26,6 @@ class _AddRecordPageState extends State<AddRecordPage> {
   final _notesController = TextEditingController();
   final _dateController = TextEditingController();
 
-  // Category specific controllers
   final _medicineNameController = TextEditingController();
   final _dosageController = TextEditingController();
   final _labNameController = TextEditingController();
@@ -35,7 +34,6 @@ class _AddRecordPageState extends State<AddRecordPage> {
 
   RecordCategory _selectedCategory = RecordCategory.prescription;
 
-  // null means "myself", otherwise it's the dependent's id
   String? _selectedDependentId;
   String _selectedDependentName = 'Myself';
 
@@ -56,9 +54,6 @@ class _AddRecordPageState extends State<AddRecordPage> {
     if (_formKey.currentState?.validate() ?? false) {
       final authState = context.read<AuthBloc>().state;
       if (authState is! AuthAuthenticated) return;
-
-      // Build category specific details map
-      // This stores extra info based on which category was selected
       final Map<String, dynamic> details = switch (_selectedCategory) {
         RecordCategory.prescription => {
             'medicineName': _medicineNameController.text.trim(),
@@ -78,7 +73,7 @@ class _AddRecordPageState extends State<AddRecordPage> {
       final record = HealthRecord(
         id: const Uuid().v4(),
         userId: authState.user.uid,
-        dependentId: _selectedDependentId, // null = primary user
+        dependentId: _selectedDependentId,
         category: _selectedCategory,
         date: _dateController.text.trim(),
         provider: _providerController.text.trim(),
@@ -93,7 +88,6 @@ class _AddRecordPageState extends State<AddRecordPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Get dependents from ProfileBloc — already loaded in shell
     final profileState = context.watch<ProfileBloc>().state;
     final dependents = profileState is ProfileLoaded
         ? profileState.dependents
@@ -108,8 +102,6 @@ class _AddRecordPageState extends State<AddRecordPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
-              // WHO IS THIS RECORD FOR?
               const Text(
                 'This record is for',
                 style: TextStyle(
@@ -172,8 +164,6 @@ class _AddRecordPageState extends State<AddRecordPage> {
 
               const SizedBox(height: 20),
 
-              // CATEGORY SPECIFIC FIELDS
-              // These change based on which category is selected
               _CategoryFields(
                 category: _selectedCategory,
                 medicineNameController: _medicineNameController,
@@ -220,7 +210,6 @@ class _AddRecordPageState extends State<AddRecordPage> {
   }
 }
 
-// Who is this record for — myself or a dependent
 class _WhoSelector extends StatelessWidget {
   final String selectedName;
   final List<DependentModel> dependents;
@@ -246,12 +235,10 @@ class _WhoSelector extends StatelessWidget {
           value: selectedName,
           isExpanded: true,
           items: [
-            // Always show "Myself" as first option
             const DropdownMenuItem(
               value: 'Myself',
               child: Text('Myself'),
             ),
-            // Then one item per dependent
             ...dependents.map(
               (d) => DropdownMenuItem(
                 value: d.name,
@@ -264,7 +251,6 @@ class _WhoSelector extends StatelessWidget {
             if (name == 'Myself') {
               onSelected(null, 'Myself');
             } else {
-              // find the dependent by name to get their id
               final dep = dependents.firstWhere((d) => d.name == name);
               onSelected(dep.id, dep.name);
             }
@@ -275,7 +261,6 @@ class _WhoSelector extends StatelessWidget {
   }
 }
 
-// Category specific fields — different fields show for each category
 class _CategoryFields extends StatelessWidget {
   final RecordCategory category;
   final TextEditingController medicineNameController;

@@ -8,7 +8,6 @@ sealed class RecordEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-// Start watching records for this user
 class RecordWatchStarted extends RecordEvent {
   final String userId;
   const RecordWatchStarted(this.userId);

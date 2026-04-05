@@ -106,7 +106,6 @@ class _CategoryFilter extends StatelessWidget {
             checkmarkColor: AppTheme.primary,
           ),
           const SizedBox(width: 8),
-          // One chip per category
           ...RecordCategory.values.map(
             (category) => Padding(
               padding: const EdgeInsets.only(right: 8),

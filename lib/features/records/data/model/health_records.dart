@@ -10,7 +10,7 @@ class HealthRecord {
   final String notes;
   final bool isShared;
   final List<String> sharedWith;
-  final Map<String, dynamic> details; // ← add this
+  final Map<String, dynamic> details;
 
   const HealthRecord({
     required this.id,
@@ -22,7 +22,7 @@ class HealthRecord {
     required this.notes,
     this.isShared = false,
     this.sharedWith = const [],
-    this.details = const {}, // ← add this
+    this.details = const {}, 
   });
 
   factory HealthRecord.fromMap(String id, Map<String, dynamic> map) {
@@ -52,7 +52,7 @@ class HealthRecord {
       'notes': notes,
       'isShared': isShared,
       'sharedWith': sharedWith,
-      'details': details, // ← add
+      'details': details,
     };
   }
 

@@ -38,7 +38,6 @@ class DashboardPage extends StatelessWidget {
         ? reminderState.upcoming
         : <ReminderModel>[];
 
-    // Generate insights only when profile is loaded
     final insights = profile != null
         ? InsightsEngine.generate(
             profile: profile,
@@ -121,7 +120,7 @@ class DashboardPage extends StatelessWidget {
   }
 }
 
-// Greeting at top
+// Top Greeting
 class _GreetingCard extends StatelessWidget {
   final UserProfile? profile;
   const _GreetingCard({required this.profile});
@@ -217,7 +216,6 @@ class _CompletionBanner extends StatelessWidget {
   }
 }
 
-// Status snapshot — 3 count cards in a row
 class _StatusRow extends StatelessWidget {
   final int recordCount;
   final int reminderCount;
@@ -311,7 +309,6 @@ class _StatusCard extends StatelessWidget {
   }
 }
 
-// Section title with optional "see all" tap
 class _SectionTitle extends StatelessWidget {
   final String title;
   final String? subtitle;

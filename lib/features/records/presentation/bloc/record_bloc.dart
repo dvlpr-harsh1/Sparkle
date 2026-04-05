@@ -16,9 +16,7 @@ class RecordBloc extends Bloc<RecordEvent, RecordState> {
     on<RecordSharingUpdated>(_onSharingUpdated);
   }
 
-  // emit.forEach listens to the stream
-  // every time Firestore sends new data → new state emitted
-  // UI rebuilds automatically
+ 
   Future<void> _onWatchStarted(
     RecordWatchStarted event,
     Emitter<RecordState> emit,
@@ -34,7 +32,6 @@ class RecordBloc extends Bloc<RecordEvent, RecordState> {
   Future<void> _onAdded(RecordAdded event, Emitter<RecordState> emit) async {
     try {
       await _recordRepository.addRecord(event.record);
-      // no need to emit here — stream will fire automatically
     } catch (e) {
       emit(const RecordFailure('Failed to add record'));
     }

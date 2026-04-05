@@ -56,7 +56,6 @@ class UserProfile {
     );
   }
 
-  // How complete is this profile? Used in dashboard later
   double get completionPercentage {
     int filled = 0;
     if (name.isNotEmpty) filled++;

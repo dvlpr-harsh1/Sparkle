@@ -22,11 +22,9 @@ class RecordLoaded extends RecordState {
 
   const RecordLoaded(this.records);
 
-  // Filter by category — used in UI
   List<HealthRecord> byCategory(RecordCategory category) =>
       records.where((r) => r.category == category).toList();
 
-  // Recent 5 records — used in dashboard
   List<HealthRecord> get recent => records.take(5).toList();
 
   @override

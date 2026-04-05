@@ -34,7 +34,6 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
   ) async {
     try {
       await _reminderRepository.addReminder(event.reminder);
-      // stream fires automatically
     } catch (e) {
       emit(const ReminderFailure('Failed to add reminder'));
     }
@@ -50,7 +49,6 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
         event.reminderId,
         event.isDone,
       );
-      // stream fires automatically
     } catch (e) {
       emit(const ReminderFailure('Failed to update reminder'));
     }
