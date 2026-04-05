@@ -14,7 +14,7 @@ import 'package:sparkle/features/reminders/data/model/remider_model.dart';
 import 'package:sparkle/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:sparkle/features/reminders/presentation/bloc/reminder_state.dart';
 
-import '../../insights/data/insight_engin.dart';
+import '../../insights/data/insight_engine.dart';
 import '../../insights/data/models/insight_model.dart';
 import '../../profile/data/model/user_model.dart';
 
